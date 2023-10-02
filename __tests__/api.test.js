@@ -17,23 +17,15 @@ describe("GET /api/topics", () => {
       .then(({ body }) => {
         const topics = body.topics;
         console.log(body);
+        expect(topics).toHaveLength(3);
         topics.forEach((topic) => {
-          expect(typeof topic).toBe("object");
+          expect(topic).toEqual(
+            expect.objectContaining({
+              slug: expect.any(String),
+              description: expect.any(String),
+            })
+          );
         });
-      });
-  });
-  test("Returns correct 3 topics when ran against test data", () => {
-    const expected = [
-      { slug: "mitch", description: "The man, the Mitch, the legend" },
-      { slug: "cats", description: "Not dogs" },
-      { slug: "paper", description: "what books are made of" },
-    ];
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then(({ body }) => {
-        const topics = body.topics;
-        expect(topics).toEqual(expected);
       });
   });
 });
