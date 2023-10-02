@@ -70,7 +70,6 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        console.log(body.article.article_id);
         expect(body.article.article_id).toBe(1);
         expect(body.article).toEqual(
           expect.objectContaining({
