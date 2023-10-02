@@ -102,6 +102,42 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+describe("GET /api/articles", () => {
+  test("Should return an array of article object", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toHaveLength(13);
+        articles.forEach((article) => {
+          expect(article.body).toBe(undefined);
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+  test("Articles should default to be sorted by age in desc order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
+
 describe("Unknow endpoint", () => {
   test("Returns 404 and informative message when request made to unhandled endpoint", () => {
     return request(app)

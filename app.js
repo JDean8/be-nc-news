@@ -2,6 +2,7 @@ const {
   getTopics,
   getApi,
   getArticleByID,
+  getArticles,
 } = require("./controllers/news.controller");
 const {
   noValidEndpoint,
@@ -16,6 +17,7 @@ const app = express();
 app.get("/api/topics", getTopics);
 app.get("/api", getApi);
 app.get("/api/articles/:article_id", getArticleByID);
+app.get("/api/articles", getArticles);
 
 app.all("/*", noValidEndpoint);
 app.use(psqlError);
