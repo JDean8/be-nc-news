@@ -3,6 +3,7 @@ const data = require("../db/data/test-data");
 const db = require("../db/connection");
 const request = require("supertest");
 const app = require("../app");
+const apiDocs = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(data);
@@ -16,7 +17,6 @@ describe("GET /api/topics", () => {
       .expect(200)
       .then(({ body }) => {
         const topics = body.topics;
-        console.log(body);
         expect(topics).toHaveLength(3);
         topics.forEach((topic) => {
           expect(topic).toEqual(
@@ -26,6 +26,40 @@ describe("GET /api/topics", () => {
             })
           );
         });
+      });
+  });
+});
+
+describe("GET /api", () => {
+  test("Shoudld return object with key endpoints that has an object as a value", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.endpoints).toBeObject();
+      });
+  });
+  test("Ensure that each endpoint has the minimum of atleast a description", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        const endpoints = body.endpoints;
+        for (const endpoint in endpoints) {
+          expect(endpoints[endpoint]).toEqual(
+            expect.objectContaining({
+              description: expect.any(String),
+            })
+          );
+        }
+      });
+  });
+  test("Should return value equivilent to the current endpoints.json file", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.endpoints).toEqual(apiDocs);
       });
   });
 });

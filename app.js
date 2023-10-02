@@ -1,10 +1,11 @@
-const { getTopics } = require("./controllers/news.controller");
+const { getTopics, getApi } = require("./controllers/news.controller");
 const { noValidEndpoint, uncaughtError } = require("./error-handling");
 const express = require("express");
 
 const app = express();
 
 app.get("/api/topics", getTopics);
+app.get("/api", getApi);
 
 app.all("/*", noValidEndpoint);
 
