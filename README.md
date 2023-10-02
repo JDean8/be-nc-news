@@ -1,3 +1,11 @@
-# Northcoders News API
+# News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+To allow the import of data to the DB's please add the two below files to the root of the repo:
+
+**.env.development**
+
+PGDATABASE=nc_news
+
+**.env.test**
+
+PGDATABASE=nc_news_test
