@@ -84,6 +84,22 @@ describe("GET /api/articles/:article_id", () => {
         );
       });
   });
+  test("Returns a 404 error and a helpful messsage when user tries to get article that doesn't exist", () => {
+    return request(app)
+      .get("/api/articles/9999999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article found with that ID");
+      });
+  });
+  test("Returns a 400 error and a helpful messsage when user tries to use a non-integer as article_id", () => {
+    return request(app)
+      .get("/api/articles/SPACE")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, invalid type");
+      });
+  });
 });
 
 describe("Unknow endpoint", () => {

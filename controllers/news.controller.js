@@ -20,6 +20,12 @@ exports.getArticleByID = (req, res, next) => {
   return fetchArticleByID(article_id)
     .then(({ rows }) => {
       const article = rows[0];
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "No article found with that ID",
+        });
+      }
       res.status(200).send({ article });
     })
     .catch((err) => {
