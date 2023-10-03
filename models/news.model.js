@@ -5,13 +5,24 @@ exports.fetchTopics = () => {
 };
 
 exports.fetchArticleByID = (article_id) => {
-  return db.query(
-    `
+  return db
+    .query(
+      `
     SELECT * FROM articles
     WHERE article_id = $1
     `,
-    [article_id]
-  );
+      [article_id]
+    )
+    .then(({ rows }) => {
+      const article = rows[0];
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "No article found with that ID",
+        });
+      }
+      return article;
+    });
 };
 
 exports.fetchArticles = () => {
@@ -22,4 +33,15 @@ exports.fetchArticles = () => {
     GROUP BY articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url
     ORDER BY articles.created_at DESC;
   `);
+};
+
+exports.fetchCommentsByArticle = (article_id) => {
+  return db.query(
+    `
+    SELECT * FROM comments
+    WHERE article_id = $1
+    ORDER BY created_at DESC;
+  `,
+    [article_id]
+  );
 };
