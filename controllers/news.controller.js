@@ -3,6 +3,7 @@ const {
   fetchArticleByID,
   fetchArticles,
   fetchCommentsByArticle,
+  updateArticle,
   createComment,
   fetchCommentByID,
   fetchUsers,
@@ -15,9 +16,7 @@ exports.getTopics = (req, res, next) => {
     .then(({ rows }) => {
       res.status(200).send({ topics: rows });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch((err) => next(err));
 };
 
 exports.getApi = (req, res, next) => {
@@ -30,9 +29,7 @@ exports.getArticleByID = (req, res, next) => {
     .then((article) => {
       res.status(200).send({ article });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch((err) => next(err));
 };
 
 exports.getArticles = (req, res, next) => {
@@ -40,9 +37,7 @@ exports.getArticles = (req, res, next) => {
     .then(({ rows }) => {
       res.status(200).send({ articles: rows });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch((err) => next(err));
 };
 
 exports.getCommentsByArticle = (req, res, next) => {
@@ -54,9 +49,28 @@ exports.getCommentsByArticle = (req, res, next) => {
     .then(([{ rows }]) => {
       res.status(200).send({ comments: rows });
     })
-    .catch((err) => {
-      next(err);
+    .catch((err) => next(err));
+};
+
+exports.patchArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  if (!inc_votes) {
+    next({
+      status: 400,
+      msg: "request must include inc_votes",
     });
+  } else {
+    fetchArticleByID(article_id)
+      .then((article) => {
+        return updateArticle(article_id, article.votes, inc_votes);
+      })
+      .then((article) => {
+        res.status(200).send({ article });
+      })
+      .catch((err) => next(err));
+  }
 };
 
 exports.postComment = (req, res, next) => {
