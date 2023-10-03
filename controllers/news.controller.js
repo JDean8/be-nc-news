@@ -3,6 +3,7 @@ const {
   fetchArticleByID,
   fetchArticles,
   fetchCommentsByArticle,
+  updateArticle,
 } = require("../models/news.model");
 const apiDocs = require("../endpoints.json");
 
@@ -11,9 +12,7 @@ exports.getTopics = (req, res, next) => {
     .then(({ rows }) => {
       res.status(200).send({ topics: rows });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch((err) => next(err));
 };
 
 exports.getApi = (req, res, next) => {
@@ -26,9 +25,7 @@ exports.getArticleByID = (req, res, next) => {
     .then((article) => {
       res.status(200).send({ article });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch((err) => next(err));
 };
 
 exports.getArticles = (req, res, next) => {
@@ -36,9 +33,7 @@ exports.getArticles = (req, res, next) => {
     .then(({ rows }) => {
       res.status(200).send({ articles: rows });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch((err) => next(err));
 };
 
 exports.getCommentsByArticle = (req, res, next) => {
@@ -50,7 +45,21 @@ exports.getCommentsByArticle = (req, res, next) => {
     .then(([{ rows }]) => {
       res.status(200).send({ comments: rows });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch((err) => next(err));
+};
+
+exports.patchArticle = (req, res, next) => {
+  console.log(req.body);
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  fetchArticleByID(article_id)
+    .then((article) => {
+      return updateArticle(article_id, article.votes, inc_votes);
+    })
+    .then((article) => {
+      console.log(article);
+      res.status(200).send({ article });
+    })
+    .catch((err) => next(err));
 };
