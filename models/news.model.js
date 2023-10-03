@@ -59,7 +59,6 @@ exports.updateArticle = (article_id, current_votes, vote_change) => {
       [new_votes, article_id]
     )
     .then(({ rows }) => {
-      console.log(rows);
       return rows[0];
     });
 };

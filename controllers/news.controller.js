@@ -49,16 +49,21 @@ exports.getCommentsByArticle = (req, res, next) => {
 };
 
 exports.patchArticle = (req, res, next) => {
-  console.log(req.body);
   const { article_id } = req.params;
   const { inc_votes } = req.body;
+  let validityCheck = 1;
+  if (!inc_votes) {
+    validityCheck = Promise.reject({
+      status: 400,
+      msg: "request must include inc_votes",
+    });
+  }
 
-  fetchArticleByID(article_id)
-    .then((article) => {
+  Promise.all([fetchArticleByID(article_id), validityCheck])
+    .then(([article]) => {
       return updateArticle(article_id, article.votes, inc_votes);
     })
     .then((article) => {
-      console.log(article);
       res.status(200).send({ article });
     })
     .catch((err) => next(err));

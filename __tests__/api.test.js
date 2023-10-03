@@ -196,7 +196,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  test("Should return updated vote count when called with inc_votes", () => {
+  test("Should return 200 and article with updated vote count when called with inc_votes", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: 1 })
@@ -217,7 +217,7 @@ describe("PATCH /api/articles/:article_id", () => {
         );
       });
   });
-  test("Should return updated vote count when called with inc_votes (negative number)", () => {
+  test("Should return 200 and article with updated vote count when called with inc_votes (negative number)", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: -2 })
@@ -236,6 +236,63 @@ describe("PATCH /api/articles/:article_id", () => {
             article_img_url: expect.any(String),
           })
         );
+      });
+  });
+  test("Should return 200 and article with updated vote count disregarding unecessary properties ", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: -2, amINeeded: false })
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.article;
+        expect(article.votes).toBe(98);
+        expect(article).toEqual(
+          expect.objectContaining({
+            author: expect.any(String),
+            title: expect.any(String),
+            body: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+          })
+        );
+      });
+  });
+  test("Should return a 404 and helpful message when clients tries to patch article that does not exist", () => {
+    return request(app)
+      .patch("/api/articles/150000/")
+      .send({ inc_votes: 2 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article found with that ID");
+      });
+  });
+  test("Should return a 400 and helpful message when clients tries to patch article with invalid article_id", () => {
+    return request(app)
+      .patch("/api/articles/SPPPPAACCCE/")
+      .send({ inc_votes: 2 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, invalid type");
+      });
+  });
+  test("Should return a 400 and helpful message when client does not include inc_votes", () => {
+    return request(app)
+      .patch("/api/articles/1/")
+      .send({ vote: 2 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("request must include inc_votes");
+      });
+  });
+  test("Should return a 400 and helpful message when clients tries to patch article with invalid figure for inc_votes", () => {
+    return request(app)
+      .patch("/api/articles/1/")
+      .send({ inc_votes: "SPACE" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, invalid type");
       });
   });
 });
