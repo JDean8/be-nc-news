@@ -5,6 +5,7 @@ const {
   getArticles,
   getCommentsByArticle,
   patchArticle,
+  postComment,
 } = require("./controllers/news.controller");
 const {
   noValidEndpoint,
@@ -24,6 +25,7 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticle);
 
 app.patch("/api/articles/:article_id", patchArticle);
+app.post("/api/articles/:article_id/comments", postComment);
 
 app.all("/*", noValidEndpoint);
 app.use(psqlError);

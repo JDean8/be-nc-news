@@ -4,6 +4,7 @@ const {
   fetchArticles,
   fetchCommentsByArticle,
   updateArticle,
+  createComment,
 } = require("../models/news.model");
 const apiDocs = require("../endpoints.json");
 
@@ -67,4 +68,20 @@ exports.patchArticle = (req, res, next) => {
       res.status(200).send({ article });
     })
     .catch((err) => next(err));
+};
+
+exports.postComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+
+  Promise.all([
+    createComment(article_id, username, body),
+    fetchArticleByID(article_id),
+  ])
+    .then(([comment]) => {
+      res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
