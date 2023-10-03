@@ -195,6 +195,55 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("POST /api/articles/:article_id/comments", () => {
+  test("Returns 201 and the comment when a comment is successfully added", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "lurker",
+        body: "Usually don't comment",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const comment = body.comment;
+        expect(comment.author).toBe("lurker");
+        expect(comment.body).toBe("Usually don't comment");
+        expect(comment.votes).toBe(0);
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+            article_id: expect.any(Number),
+          })
+        );
+      });
+  });
+  test("Should return a 404 and helpful message when clients tries to post comment for article that does not exist", () => {
+    return request(app)
+      .post("/api/articles/15000/comments")
+      .send({
+        username: "lurker",
+        body: "Usually don't comment",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article found with that ID");
+      });
+  });
+  test("Should return a 400 and helpful message when clients tries to post comment for article with invalid username", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "no_a_username",
+        body: "Valid comment",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid username");
+      });
+  });
+});
+
 describe("Unknow endpoint", () => {
   test("Returns 404 and informative message when request made to unhandled endpoint", () => {
     return request(app)
