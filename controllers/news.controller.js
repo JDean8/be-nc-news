@@ -5,6 +5,7 @@ const {
   fetchCommentsByArticle,
   createComment,
   fetchCommentByID,
+  fetchUsers,
   removeComment,
 } = require("../models/news.model");
 const apiDocs = require("../endpoints.json");
@@ -80,6 +81,14 @@ exports.deleteComment = (req, res, next) => {
     })
     .then(() => {
       res.sendStatus(204);
+    })
+    .catch((err) => next(err));
+};
+
+exports.getUsers = (req, res, next) => {
+  fetchUsers()
+    .then((users) => {
+      res.status(200).send({ users });
     })
     .catch((err) => next(err));
 };
