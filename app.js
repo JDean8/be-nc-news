@@ -6,6 +6,7 @@ const {
   getCommentsByArticle,
   postComment,
   deleteComment,
+  getUsers,
 } = require("./controllers/news.controller");
 const {
   noValidEndpoint,
@@ -23,6 +24,7 @@ app.get("/api", getApi);
 app.get("/api/articles/:article_id", getArticleByID);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticle);
+app.get("/api/users", getUsers);
 
 app.post("/api/articles/:article_id/comments", postComment);
 
