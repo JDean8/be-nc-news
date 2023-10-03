@@ -3,6 +3,7 @@ const {
   fetchArticleByID,
   fetchArticles,
   fetchCommentsByArticle,
+  removeComment,
 } = require("../models/news.model");
 const apiDocs = require("../endpoints.json");
 
@@ -53,4 +54,8 @@ exports.getCommentsByArticle = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.deleteComment = (req, res, next) => {
+  removeComment();
 };

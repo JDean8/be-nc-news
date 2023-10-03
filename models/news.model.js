@@ -45,3 +45,5 @@ exports.fetchCommentsByArticle = (article_id) => {
     [article_id]
   );
 };
+
+exports.removeComment = (comment_id) => {};

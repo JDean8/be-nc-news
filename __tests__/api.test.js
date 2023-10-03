@@ -195,6 +195,12 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("DELETE /api/comments/:comment_id", () => {
+  test("User is sent 204 with no content when successful", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+});
+
 describe("Unknow endpoint", () => {
   test("Returns 404 and informative message when request made to unhandled endpoint", () => {
     return request(app)
