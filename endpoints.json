@@ -48,7 +48,7 @@
     "description": "serves an array of comments on selected article",
     "queries": [],
     "exampleResponse": {
-      "articles": [
+      "comments": [
         {
           "comment_id": 9,
           "body": "Superficially charming",
