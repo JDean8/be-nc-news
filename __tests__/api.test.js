@@ -199,6 +199,33 @@ describe("DELETE /api/comments/:comment_id", () => {
   test("User is sent 204 with no content when successful", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
+  test("Comment is deleted from the DB", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(() => {
+        return db.query(`SELECT * FROM comments WHERE comment_id = 1`);
+      })
+      .then(({ rows }) => {
+        expect(rows).toHaveLength(0);
+      });
+  });
+  test("Returns 404 and helpful message when user tried to delete a comment that does not exist", () => {
+    return request(app)
+      .delete("/api/comments/15000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No comment found with that ID");
+      });
+  });
+  test("Returns 400 and helpful message when user tried to delete a comment with an invalid ID", () => {
+    return request(app)
+      .delete("/api/comments/SPACE")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, invalid type");
+      });
+  });
 });
 
 describe("Unknow endpoint", () => {
