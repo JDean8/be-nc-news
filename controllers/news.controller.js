@@ -3,6 +3,7 @@ const {
   fetchArticleByID,
   fetchArticles,
   fetchCommentsByArticle,
+  createComment,
   fetchCommentByID,
   removeComment,
 } = require("../models/news.model");
@@ -55,6 +56,20 @@ exports.getCommentsByArticle = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.postComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+
+  Promise.all([
+    createComment(article_id, username, body),
+    fetchArticleByID(article_id),
+  ])
+    .then(([comment]) => {
+      res.status(201).send({ comment });
+    })
+    .catch((err) => next(err));
 };
 
 exports.deleteComment = (req, res, next) => {
