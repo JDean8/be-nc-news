@@ -6,6 +6,7 @@ const {
   updateArticle,
   createComment,
   fetchCommentByID,
+  fetchUsers,
   removeComment,
 } = require("../models/news.model");
 const apiDocs = require("../endpoints.json");
@@ -54,22 +55,22 @@ exports.getCommentsByArticle = (req, res, next) => {
 exports.patchArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  let validityCheck = 1;
+
   if (!inc_votes) {
-    validityCheck = Promise.reject({
+    next({
       status: 400,
       msg: "request must include inc_votes",
     });
+  } else {
+    fetchArticleByID(article_id)
+      .then((article) => {
+        return updateArticle(article_id, article.votes, inc_votes);
+      })
+      .then((article) => {
+        res.status(200).send({ article });
+      })
+      .catch((err) => next(err));
   }
-
-  Promise.all([fetchArticleByID(article_id), validityCheck])
-    .then(([article]) => {
-      return updateArticle(article_id, article.votes, inc_votes);
-    })
-    .then((article) => {
-      res.status(200).send({ article });
-    })
-    .catch((err) => next(err));
 };
 
 exports.postComment = (req, res, next) => {
@@ -94,6 +95,14 @@ exports.deleteComment = (req, res, next) => {
     })
     .then(() => {
       res.sendStatus(204);
+    })
+    .catch((err) => next(err));
+};
+
+exports.getUsers = (req, res, next) => {
+  fetchUsers()
+    .then((users) => {
+      res.status(200).send({ users });
     })
     .catch((err) => next(err));
 };

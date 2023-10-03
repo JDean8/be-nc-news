@@ -195,6 +195,27 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("GET /api/users", () => {
+  test("Should return an array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const users = body.users;
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+});
+
 describe("PATCH /api/articles/:article_id", () => {
   test("Should return 200 and article with updated vote count when called with inc_votes", () => {
     return request(app)
@@ -203,7 +224,6 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         const article = body.article;
-        expect(article.votes).toBe(101);
         expect(article).toEqual(
           expect.objectContaining({
             author: expect.any(String),
@@ -211,7 +231,7 @@ describe("PATCH /api/articles/:article_id", () => {
             body: expect.any(String),
             topic: expect.any(String),
             created_at: expect.any(String),
-            votes: expect.any(Number),
+            votes: 101,
             article_img_url: expect.any(String),
           })
         );
