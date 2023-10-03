@@ -2,6 +2,7 @@ const {
   fetchTopics,
   fetchArticleByID,
   fetchArticles,
+  fetchCommentsByArticle,
 } = require("../models/news.model");
 const apiDocs = require("../endpoints.json");
 
@@ -22,14 +23,7 @@ exports.getApi = (req, res, next) => {
 exports.getArticleByID = (req, res, next) => {
   const { article_id } = req.params;
   return fetchArticleByID(article_id)
-    .then(({ rows }) => {
-      const article = rows[0];
-      if (rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "No article found with that ID",
-        });
-      }
+    .then((article) => {
       res.status(200).send({ article });
     })
     .catch((err) => {
@@ -41,6 +35,20 @@ exports.getArticles = (req, res, next) => {
   fetchArticles()
     .then(({ rows }) => {
       res.status(200).send({ articles: rows });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getCommentsByArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  Promise.all([
+    fetchCommentsByArticle(article_id),
+    fetchArticleByID(article_id),
+  ])
+    .then(([{ rows }]) => {
+      res.status(200).send({ comments: rows });
     })
     .catch((err) => {
       next(err);

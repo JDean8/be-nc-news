@@ -138,6 +138,63 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe("GET /api/articles/:article_id/comments", () => {
+  test("Returns an array of comments under the key of comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const comments = body.comments;
+        expect(comments).toHaveLength(11);
+        comments.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              article_id: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+  test("Should be sorted by created at desc", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const comments = body.comments;
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("Should return a 200 and an empty array when clients tries to get comments for article that has none", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+  test("Should return a 404 and helpful message when clients tries to get comments for article that does not exist", () => {
+    return request(app)
+      .get("/api/articles/150000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article found with that ID");
+      });
+  });
+  test("Should return a 400 and helpful message when clients tries to get comments with an article_id of an incompatible type", () => {
+    return request(app)
+      .get("/api/articles/SPAAAAACCCCE/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, invalid type");
+      });
+  });
+});
+
 describe("Unknow endpoint", () => {
   test("Returns 404 and informative message when request made to unhandled endpoint", () => {
     return request(app)
