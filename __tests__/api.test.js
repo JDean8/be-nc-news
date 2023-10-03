@@ -229,6 +229,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(201)
       .then(({ body }) => {
         const comment = body.comment;
+        expect(comment.isRedundantProperty).toBe(undefined);
         expect(comment.author).toBe("lurker");
         expect(comment.body).toBe("Usually don't comment");
         expect(comment.votes).toBe(0);
@@ -253,7 +254,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("No article found with that ID");
       });
   });
-  test("Should return a 404 and helpful message when clients tries to post comment for invalid article_id", () => {
+  test("Should return a 400 and helpful message when clients tries to post comment for invalid article_id", () => {
     return request(app)
       .post("/api/articles/SPACE/comments")
       .send({
@@ -265,16 +266,16 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request, invalid type");
       });
   });
-  test("Should return a 400 and helpful message when clients tries to post comment for article with invalid username", () => {
+  test("Should return a 404 and helpful message when clients tries to post comment for article with username that hasn't been created", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
-        username: "no_a_username",
+        username: "not_a_username",
         body: "Valid comment",
       })
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid username");
+        expect(body.msg).toBe("Username not recognised");
       });
   });
   test("Should return a 400 and helpful message when clients tries to post comment for article with missing fields", () => {
