@@ -8,8 +8,13 @@ exports.fetchArticleByID = (article_id) => {
   return db
     .query(
       `
-    SELECT * FROM articles
-    WHERE article_id = $1
+      SELECT
+      articles.article_id, article_img_url, articles.author, articles.body, articles.created_at, title, topic, articles.votes,
+      COUNT(comment_id)::INT AS comment_count
+      FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id
+      GROUP BY
+      articles.article_id, article_img_url, articles.author, articles.body, articles.created_at, title, topic, articles.votes
+      HAVING articles.article_id = $1;
     `,
       [article_id]
     )
