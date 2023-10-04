@@ -28,7 +28,7 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves an article on a key of article which makes the article ID url",
-    "queries": [],
+    "queries": ["topic"],
     "exampleResponse": {
       "articles": [
         {
