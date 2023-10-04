@@ -145,13 +145,13 @@ describe("GET /api/articles", () => {
         const articles = body.articles;
         expect(articles).toHaveLength(1);
         articles.forEach((article) => {
-          expect(article.body).toBe(undefined);
+          expect(article).not.toHaveProperty("body");
           expect(article).toEqual(
             expect.objectContaining({
               author: expect.any(String),
               title: expect.any(String),
               article_id: expect.any(Number),
-              topic: expect.any(String),
+              topic: "cats",
               created_at: expect.any(String),
               votes: expect.any(Number),
               article_img_url: expect.any(String),

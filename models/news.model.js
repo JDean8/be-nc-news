@@ -36,7 +36,7 @@ exports.fetchArticles = (sortTopic) => {
                 LEFT JOIN comments on comments.article_id = articles.article_id `;
   if (sortTopic) {
     values.push(sortTopic);
-    query += `WHERE topic = $${values.length} `;
+    query += `WHERE topic = $1 `;
   }
   query += `GROUP BY articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url
             ORDER BY articles.created_at DESC;`;

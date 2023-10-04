@@ -9,7 +9,7 @@ const {
   fetchUsers,
   removeComment,
 } = require("../models/news.model");
-const { invalidTopic } = require("../utils/controller.utils");
+const { invalidTopic } = require("../utils/query_checks.utils");
 const apiDocs = require("../endpoints.json");
 
 exports.getTopics = (req, res, next) => {
@@ -35,17 +35,8 @@ exports.getArticleByID = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const { topic } = req.query;
-
-  invalidTopic(topic)
-    .then((isInvalid) => {
-      if (topic && isInvalid) {
-        return Promise.reject({ status: 400, msg: "No such topic exists" });
-      }
-    })
-    .then(() => {
-      return fetchArticles(topic);
-    })
-    .then(({ rows }) => {
+  Promise.all([fetchArticles(topic), topic && invalidTopic(topic)])
+    .then(([{ rows }]) => {
       res.status(200).send({ articles: rows });
     })
     .catch((err) => next(err));
