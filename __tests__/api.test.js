@@ -137,6 +137,24 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
+  test("Articles should be sorted to asc when passed order query asc", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+  test("Articles should be sorted to by column specified in query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toBeSortedBy("comment_count", { descending: true });
+      });
+  });
   test("Should return only articles with a matching topic when supplied as a query", () => {
     return request(app)
       .get("/api/articles?topic=cats")
@@ -176,6 +194,22 @@ describe("GET /api/articles", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("No such topic exists");
+      });
+  });
+  test("Should return a 400 and helpful message when a user attempts to order by anything other than asc or desc", () => {
+    return request(app)
+      .get("/api/articles?order=spaceeee")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Order must be asc or desc");
+      });
+  });
+  test("Should return a 400 and helpful message when a user attempts to sort_by by anything other than a column name", () => {
+    return request(app)
+      .get("/api/articles?sort_by=spaceeee")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Sort_by must be a vaild column name");
       });
   });
   test("Additional incorrect queries should not effect the return value", () => {

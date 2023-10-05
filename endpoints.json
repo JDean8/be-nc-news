@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "Serves an array of all articles",
-    "queries": ["topic"],
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
