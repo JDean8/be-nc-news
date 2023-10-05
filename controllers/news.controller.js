@@ -9,6 +9,7 @@ const {
   fetchUsers,
   removeComment,
   fetchUserByUsername,
+  updateComment,
 } = require("../models/news.model");
 const {
   invalidTopic,
@@ -109,6 +110,27 @@ exports.deleteComment = (req, res, next) => {
       res.sendStatus(204);
     })
     .catch((err) => next(err));
+};
+
+exports.patchComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+
+  if (!inc_votes) {
+    next({
+      status: 400,
+      msg: "request must include inc_votes",
+    });
+  } else {
+    fetchCommentByID(comment_id)
+      .then((comment) => {
+        return updateComment(comment_id, comment.votes, inc_votes);
+      })
+      .then((comment) => {
+        res.status(200).send({ comment });
+      })
+      .catch((err) => next(err));
+  }
 };
 
 exports.getUsers = (req, res, next) => {

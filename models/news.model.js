@@ -128,6 +128,23 @@ exports.removeComment = (comment_id) => {
   );
 };
 
+exports.updateComment = (comment_id, current_votes, vote_change) => {
+  const new_votes = current_votes + vote_change;
+  return db
+    .query(
+      `
+        UPDATE comments
+        SET votes = $1
+        WHERE comment_id = $2
+        RETURNING *
+    `,
+      [new_votes, comment_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
 exports.fetchUsers = () => {
   return db.query(`SELECT * FROM users`).then(({ rows }) => rows);
 };

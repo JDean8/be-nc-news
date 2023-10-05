@@ -559,6 +559,46 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
+describe("PATCH /api/comments/:comment_id", () => {
+  test("User is sent 204 with no content when successful", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        const comment = body.comment;
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: 1,
+            votes: 17,
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          })
+        );
+      });
+  });
+  test("Returns 404 and helpful message when user tried to update a comment that does not exist", () => {
+    return request(app)
+      .patch("/api/comments/15000")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No comment found with that ID");
+      });
+  });
+  test("Returns 400 and helpful message when user does not provide inc_votes", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ vote: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("request must include inc_votes");
+      });
+  });
+});
+
 describe("Unknow endpoint", () => {
   test("Returns 404 and informative message when request made to unhandled endpoint", () => {
     return request(app)
