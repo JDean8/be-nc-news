@@ -73,6 +73,17 @@
       ]
     }
   },
+  "GET /api/users/:username": {
+    "description": "Serves a user object on key user",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "tickle122",
+        "name": "Tom Tickle",
+        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+      }
+    }
+  },
   "PATCH /api/articles/:article_id": {
     "description": "Increases vote count of article by inc_votes (to decrease set negative value)",
     "body": { "inc_votes": 1 },
