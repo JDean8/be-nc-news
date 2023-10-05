@@ -3,6 +3,11 @@ const {
   createRef,
   formatComments,
 } = require("../db/seeds/utils");
+const {
+  invalidTopic,
+  invalidSortBy,
+  invalidOrder,
+} = require("../utils/query_checks.utils");
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {

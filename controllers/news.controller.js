@@ -9,7 +9,11 @@ const {
   fetchUsers,
   removeComment,
 } = require("../models/news.model");
-const { invalidTopic } = require("../utils/query_checks.utils");
+const {
+  invalidTopic,
+  invalidOrder,
+  invalidSortBy,
+} = require("../utils/query_checks.utils");
 const apiDocs = require("../endpoints.json");
 
 exports.getTopics = (req, res, next) => {
@@ -34,8 +38,13 @@ exports.getArticleByID = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic } = req.query;
-  Promise.all([fetchArticles(topic), topic && invalidTopic(topic)])
+  const { topic, sort_by, order } = req.query;
+  Promise.all([
+    fetchArticles(topic, sort_by, order),
+    topic && invalidTopic(topic),
+    sort_by && invalidSortBy(sort_by),
+    order && invalidOrder(order),
+  ])
     .then(([{ rows }]) => {
       res.status(200).send({ articles: rows });
     })
