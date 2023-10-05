@@ -1,11 +1,6 @@
 const {
   getTopics,
   getApi,
-  getArticleByID,
-  getArticles,
-  getCommentsByArticle,
-  patchArticle,
-  postComment,
   deleteComment,
   getUsers,
 } = require("./controllers/news.controller");
@@ -15,21 +10,17 @@ const {
   customError,
   psqlError,
 } = require("./error-handling");
+const articleRouter = require("./routes/articles.routes");
 const express = require("express");
 
 const app = express();
 app.use(express.json());
 
-app.get("/api/topics", getTopics);
+app.use("/api/articles", articleRouter);
+
 app.get("/api", getApi);
-app.get("/api/articles/:article_id", getArticleByID);
-app.get("/api/articles", getArticles);
-app.get("/api/articles/:article_id/comments", getCommentsByArticle);
+app.get("/api/topics", getTopics);
 app.get("/api/users", getUsers);
-
-app.patch("/api/articles/:article_id", patchArticle);
-app.post("/api/articles/:article_id/comments", postComment);
-
 app.delete("/api/comments/:comment_id", deleteComment);
 
 app.all("/*", noValidEndpoint);
