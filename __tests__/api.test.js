@@ -316,6 +316,30 @@ describe("GET /api/users", () => {
   });
 });
 
+describe("GET /api/users/:username", () => {
+  test("Should return a user object on key user", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        const user = body.user;
+        expect(user.username).toBe("butter_bridge");
+        expect(user.name).toBe("jonny");
+        expect(user.avatar_url).toBe(
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        );
+      });
+  });
+  test("Should return a 404 and helpful message when user name does not exist", () => {
+    return request(app)
+      .get("/api/users/alter_bridge")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No such user found");
+      });
+  });
+});
+
 describe("PATCH /api/articles/:article_id", () => {
   test("Should return 200 and article with updated vote count when called with inc_votes", () => {
     return request(app)
