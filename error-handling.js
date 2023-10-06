@@ -24,6 +24,10 @@ exports.psqlError = (err, req, res, next) => {
     res.status(404).send({ msg: "No article found with that ID" });
   } else if (err.constraint === "comments_author_fkey") {
     res.status(404).send({ msg: "Username not recognised" });
+  } else if (err.constraint === "articles_author_fkey") {
+    res.status(404).send({ msg: "No author listed with that username" });
+  } else if (err.constraint === "articles_topic_fkey") {
+    res.status(404).send({ msg: "No such topic exists" });
   } else {
     next(err);
   }

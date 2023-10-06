@@ -188,10 +188,10 @@ describe("GET /api/articles", () => {
         expect(articles).toHaveLength(0);
       });
   });
-  test("Should return a 400 and helpful message when a user attempts to filter by topic that does not exist", () => {
+  test("Should return a 404 and helpful message when a user attempts to filter by topic that does not exist", () => {
     return request(app)
       .get("/api/articles?topic=SPACCCEEEE")
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("No such topic exists");
       });
@@ -437,6 +437,108 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request, invalid type");
+      });
+  });
+});
+
+describe("POST /api/articles", () => {
+  test("Returns 201 and new article details", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "butter_bridge",
+        topic: "cats",
+        body: "not as good as dogs but fine",
+        title: "What are they?",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const article = body.article;
+        expect(article).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            topic: "cats",
+            body: "not as good as dogs but fine",
+            title: "What are they?",
+            article_img_url:
+              "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+            votes: 0,
+            comment_count: 0,
+            created_at: expect.any(String),
+            article_id: expect.any(Number),
+          })
+        );
+      });
+  });
+  test("Returns 201 and new article details (allows URL to be set manually)", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "butter_bridge",
+        topic: "cats",
+        body: "not as good as dogs but fine",
+        title: "What are they?",
+        article_img_url:
+          "https://images.unsplash.com/photo-1537123547273-e59f4f437f1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const article = body.article;
+        expect(article).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            topic: "cats",
+            body: "not as good as dogs but fine",
+            title: "What are they?",
+            article_img_url:
+              "https://images.unsplash.com/photo-1537123547273-e59f4f437f1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80",
+            votes: 0,
+            comment_count: 0,
+            created_at: expect.any(String),
+            article_id: expect.any(Number),
+          })
+        );
+      });
+  });
+  test("Returns 404 and helpful message when provided with topic that does not exist", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "C+C",
+        topic: "SPPPACCCCEEE",
+        body: "Tim Curry nailed this role",
+        title: "Chewing scenery",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No such topic exists");
+      });
+  });
+  test("Returns 404 and helpful message when provided with author that does not exist", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "tim_curry",
+        topic: "cats",
+        body: "not as good as dogs but fine",
+        title: "What are they?",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No author listed with that username");
+      });
+  });
+  test("Returns 400 and helpful message when provided when missing fields", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "butter_bridge",
+        topic: "cats",
+        title: "What are they?",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Missing required field");
       });
   });
 });

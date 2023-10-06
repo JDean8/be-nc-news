@@ -10,6 +10,7 @@ const {
   removeComment,
   fetchUserByUsername,
   updateComment,
+  createPost,
 } = require("../models/news.model");
 const {
   invalidTopic,
@@ -145,5 +146,23 @@ exports.getUserByUsername = (req, res, next) => {
   const { username } = req.params;
   fetchUserByUsername(username)
     .then((user) => res.status(200).send({ user }))
+    .catch((err) => next(err));
+};
+
+exports.postArticle = (req, res, next) => {
+  const defaultURL =
+    "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700";
+  const { author, title, body, topic, article_img_url = defaultURL } = req.body;
+
+  Promise.all([
+    createPost(author, title, body, topic, article_img_url),
+    invalidTopic(topic),
+    fetchUserByUsername(author),
+  ])
+    .then(([newArticle]) => {
+      return fetchArticleByID(newArticle.article_id).then((article) => {
+        res.status(201).send({ article });
+      });
+    })
     .catch((err) => next(err));
 };

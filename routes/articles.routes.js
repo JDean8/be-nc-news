@@ -6,9 +6,10 @@ const {
   getArticles,
   patchArticle,
   postComment,
+  postArticle,
 } = require("../controllers/news.controller");
 
-router.get("/", getArticles);
+router.route("/").get(getArticles).post(postArticle);
 
 router.route("/:article_id").get(getArticleByID).patch(patchArticle);
 
