@@ -295,7 +295,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const comments = body.comments;
-        expect(comments).toHaveLength(11);
         comments.forEach((comment) => {
           expect(comment).toEqual(
             expect.objectContaining({
@@ -317,6 +316,46 @@ describe("GET /api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         const comments = body.comments;
         expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("Default limit should should 10 comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(10);
+      });
+  });
+  test("limit query allows clients to select a number of results per page", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(5);
+      });
+  });
+  test("Sould return 400 and helpful message when incorrect type provided for limit", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=SPACE")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, invalid type");
+      });
+  });
+  test("page query allows clients to select which page they view", () => {
+    return request(app)
+      .get("/api/articles/1/comments?page=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(1);
+      });
+  });
+  test("Sould return 400 and helpful message when incorrect type provided for page", () => {
+    return request(app)
+      .get("/api/articles/1/comments?page=SPACE")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, invalid type");
       });
   });
   test("Should return a 200 and an empty array when clients tries to get comments for article that has none", () => {

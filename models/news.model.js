@@ -58,14 +58,19 @@ exports.fetchArticles = (
   return db.query(query, values);
 };
 
-exports.fetchCommentsByArticle = (article_id) => {
+exports.fetchCommentsByArticle = (article_id, limit = 10, page = 1) => {
+  const offset = page * 10 - 10;
   return db.query(
-    `
+    format(
+      `
     SELECT * FROM comments
-    WHERE article_id = $1
-    ORDER BY created_at DESC;
-  `,
-    [article_id]
+    WHERE article_id = %s
+    ORDER BY created_at DESC
+    LIMIT %s OFFSET %s;`,
+      article_id,
+      limit,
+      offset
+    )
   );
 };
 

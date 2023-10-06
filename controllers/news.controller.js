@@ -59,8 +59,9 @@ exports.getArticles = (req, res, next) => {
 
 exports.getCommentsByArticle = (req, res, next) => {
   const { article_id } = req.params;
+  const { limit, page } = req.query;
   Promise.all([
-    fetchCommentsByArticle(article_id),
+    fetchCommentsByArticle(article_id, limit, page),
     fetchArticleByID(article_id),
   ])
     .then(([{ rows }]) => {
