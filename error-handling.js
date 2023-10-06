@@ -28,6 +28,8 @@ exports.psqlError = (err, req, res, next) => {
     res.status(404).send({ msg: "No author listed with that username" });
   } else if (err.constraint === "articles_topic_fkey") {
     res.status(404).send({ msg: "No such topic exists" });
+  } else if (err.constraint === "topics_pkey") {
+    res.status(400).send({ msg: "Topic already exists" });
   } else {
     next(err);
   }

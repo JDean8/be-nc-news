@@ -1,10 +1,11 @@
-const { articleRouter, usersRouter, commentsRouter } = require("./routes");
-const express = require("express");
 const {
-  getTopics,
-  getApi,
-  deleteComment,
-} = require("./controllers/news.controller");
+  articleRouter,
+  usersRouter,
+  commentsRouter,
+  topicsRouter,
+} = require("./routes");
+const express = require("express");
+const { getApi } = require("./controllers/news.controller");
 const {
   noValidEndpoint,
   uncaughtError,
@@ -19,10 +20,10 @@ app.use(express.json());
 app.use("/api/articles", articleRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/comments", commentsRouter);
+app.use("/api/topics", topicsRouter);
 
 // endpoints
 app.get("/api", getApi);
-app.get("/api/topics", getTopics);
 
 // error handling
 app.all("/*", noValidEndpoint);
