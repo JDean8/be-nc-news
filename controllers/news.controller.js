@@ -12,6 +12,7 @@ const {
   updateComment,
   createPost,
   createTopic,
+  removeArticle,
 } = require("../models/news.model");
 const {
   invalidTopic,
@@ -177,6 +178,30 @@ exports.postTopic = (req, res, next) => {
   createTopic(slug, description)
     .then((topic) => {
       res.status(201).send({ topic });
+    })
+    .catch((err) => next(err));
+};
+
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params;
+
+  Promise.all([
+    fetchCommentsByArticle(article_id, "ALL"),
+    fetchArticleByID(article_id),
+  ])
+    .then(([{ rows }]) => {
+      let promises = [];
+      const commentsToBeRemoved = rows;
+      commentsToBeRemoved.forEach((comment) => {
+        promises.push(removeComment(comment.comment_id));
+      });
+      return Promise.all(promises);
+    })
+    .then(() => {
+      return removeArticle(article_id);
+    })
+    .then(() => {
+      res.sendStatus(204);
     })
     .catch((err) => next(err));
 };
