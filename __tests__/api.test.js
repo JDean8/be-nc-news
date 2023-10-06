@@ -782,6 +782,34 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
+describe("DELETE /api/articles/:article_id", () => {
+  test("Deletes an article with no comments", () => {
+    return request(app).delete("/api/articles/2").expect(204);
+  });
+  test("Deletes an article with one comment", () => {
+    return request(app).delete("/api/articles/6").expect(204);
+  });
+  test("Deletes an article with many comment", () => {
+    return request(app).delete("/api/articles/1").expect(204);
+  });
+  test("Sends 404 and helpful error message when not article with that ID exists", () => {
+    return request(app)
+      .delete("/api/articles/15000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article found with that ID");
+      });
+  });
+  test("Sends 400 and helpful error message when not valid article ID", () => {
+    return request(app)
+      .delete("/api/articles/abc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, invalid type");
+      });
+  });
+});
+
 describe("PATCH /api/comments/:comment_id", () => {
   test("User is sent 204 with no content when successful", () => {
     return request(app)

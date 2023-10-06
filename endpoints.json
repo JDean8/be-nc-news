@@ -174,5 +174,10 @@
     "description": "Removes selected comment (should respond with 204 and no body) ",
     "queries": [],
     "exampleResponse": {}
+  },
+  "DELETE /api/articles/:comment_id": {
+    "description": "Removes selected article and all assocaited comments (should respond with 204 and no body) ",
+    "queries": [],
+    "exampleResponse": {}
   }
 }
