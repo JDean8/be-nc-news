@@ -41,15 +41,18 @@ exports.getArticleByID = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sort_by, order } = req.query;
+  const { topic, sort_by, order, limit, page } = req.query;
   Promise.all([
-    fetchArticles(topic, sort_by, order),
+    fetchArticles(topic, sort_by, order, limit, page),
+    fetchArticles(topic, sort_by, order, "ALL"),
     topic && invalidTopic(topic),
     sort_by && invalidSortBy(sort_by),
     order && invalidOrder(order),
   ])
-    .then(([{ rows }]) => {
-      res.status(200).send({ articles: rows });
+    .then((results) => {
+      const articles = results[0].rows;
+      const count = results[1].rows.length;
+      res.status(200).send({ articles, count });
     })
     .catch((err) => next(err));
 };
