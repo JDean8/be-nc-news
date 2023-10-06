@@ -136,6 +136,30 @@
       ]
     }
   },
+  "POST /api/articles": {
+    "description": "Creates a new article",
+    "body": {
+      "title": "Is cous cous actually pasta",
+      "topic": "cooking",
+      "author": "jack",
+      "body": "Turns out yes",
+      "article_img_url": "https://images.unsplash.com/photo-1686820740904-3cb27426c47d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80"
+    },
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "article_id": 24,
+        "title": "Is cous cous actually pasta",
+        "topic": "cooking",
+        "author": "jack",
+        "body": "Turns out yes",
+        "created_at": "2018-05-30T15:59:13.341Z",
+        "votes": 0,
+        "comment_count": 0,
+        "article_img_url": "https://images.unsplash.com/photo-1686820740904-3cb27426c47d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80"
+      }
+    }
+  },
   "DELETE /api/comments/:comment_id": {
     "description": "Removes selected comment (should respond with 204 and no body) ",
     "queries": [],
