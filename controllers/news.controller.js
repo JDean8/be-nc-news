@@ -11,6 +11,7 @@ const {
   fetchUserByUsername,
   updateComment,
   createPost,
+  createTopic,
 } = require("../models/news.model");
 const {
   invalidTopic,
@@ -167,6 +168,15 @@ exports.postArticle = (req, res, next) => {
       return fetchArticleByID(newArticle.article_id).then((article) => {
         res.status(201).send({ article });
       });
+    })
+    .catch((err) => next(err));
+};
+
+exports.postTopic = (req, res, next) => {
+  const { slug, description } = req.body;
+  createTopic(slug, description)
+    .then((topic) => {
+      res.status(201).send({ topic });
     })
     .catch((err) => next(err));
 };

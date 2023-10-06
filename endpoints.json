@@ -160,6 +160,16 @@
       }
     }
   },
+  "POST /api/topics": {
+    "description": "Creates a new topic",
+    "body": { "slug": "football", "description": "Footie!" },
+    "queries": [],
+    "exampleResponse": {
+      "topic": {
+        "topics": [{ "slug": "football", "description": "Footie!" }]
+      }
+    }
+  },
   "DELETE /api/comments/:comment_id": {
     "description": "Removes selected comment (should respond with 204 and no body) ",
     "queries": [],

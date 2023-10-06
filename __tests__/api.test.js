@@ -655,7 +655,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         );
       });
   });
-  test("Returns 201 and the comment when a comment is successfully added (ignoring redundant properties", () => {
+  test("Returns 201 and the comment when a comment is successfully added (ignoring redundant properties)", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
@@ -724,6 +724,38 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Missing required field");
+      });
+  });
+});
+
+describe("POST /api/topics", () => {
+  test("Returns 201 and topic on key of topic", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "Guitars", description: "All things gear related" })
+      .expect(201)
+      .then(({ body }) => {
+        const topic = body.topic;
+        expect(topic.slug).toBe("Guitars");
+        expect(topic.description).toBe("All things gear related");
+      });
+  });
+  test("Should return a 400 and helpful message when clients tries to create a topic with missing fields", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ description: "All things gear related" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Missing required field");
+      });
+  });
+  test("Should return a 400 and helpful message when clients tries to create a topic with existing slug", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "cats" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic already exists");
       });
   });
 });
