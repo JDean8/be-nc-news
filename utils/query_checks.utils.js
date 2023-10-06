@@ -9,7 +9,7 @@ exports.invalidTopic = (topic) => {
     })
     .then((result) => {
       if (result) {
-        return Promise.reject({ status: 400, msg: "No such topic exists" });
+        return Promise.reject({ status: 404, msg: "No such topic exists" });
       }
     });
 };

@@ -160,3 +160,18 @@ exports.fetchUserByUsername = (username) => {
       }
     });
 };
+
+exports.createPost = (author, title, body, topic, article_img_url) => {
+  return db
+    .query(
+      `
+  INSERT INTO articles (author, title, body, topic, article_img_url)
+  VALUES ($1, $2, $3, $4, $5)
+  RETURNING *;
+  `,
+      [author, title, body, topic, article_img_url]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
