@@ -45,8 +45,8 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "Serves an array of comments on selected article",
-    "queries": [],
+    "description": "Serves an array of comments on selected article (default limit is 10 and page is 1)",
+    "queries": ["limit", "page"],
     "exampleResponse": {
       "comments": [
         {
