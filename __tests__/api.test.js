@@ -110,7 +110,6 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         const articles = body.articles;
-        expect(articles).toHaveLength(13);
         articles.forEach((article) => {
           expect(article.body).toBe(undefined);
           expect(article).toEqual(
@@ -234,6 +233,57 @@ describe("GET /api/articles", () => {
             })
           );
         });
+      });
+  });
+  test("The return should default to a page limit of 10", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toHaveLength(10);
+      });
+  });
+  test("Should accept the query limit and then show that many results", () => {
+    return request(app)
+      .get("/api/articles?limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toHaveLength(5);
+      });
+  });
+  test("Should return 400 and helpful message when limit is set to invalid type", () => {
+    return request(app)
+      .get("/api/articles?limit=five")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, invalid type");
+      });
+  });
+  test("User should be able to select a page of results", () => {
+    return request(app)
+      .get("/api/articles?page=2")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toHaveLength(3);
+      });
+  });
+  test("Should return 400 and helpful message when page is set to invalid type", () => {
+    return request(app)
+      .get("/api/articles?page=two")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request, invalid type");
+      });
+  });
+  test("Should send back a total count of articles allong with the articles key", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.count).toBe(13);
       });
   });
 });

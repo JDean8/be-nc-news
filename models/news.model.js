@@ -34,7 +34,9 @@ exports.fetchArticleByID = (article_id) => {
 exports.fetchArticles = (
   sortTopic,
   sort_by = "articles.created_at",
-  order = "desc"
+  order = "desc",
+  limit = 10,
+  page = 1
 ) => {
   let values = [];
   let query = ` SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id)::INT AS comment_count FROM articles
@@ -43,14 +45,16 @@ exports.fetchArticles = (
     values.push(sortTopic);
     query += `WHERE topic = $${values.length} `;
   }
-
+  const offset = page * 10 - 10;
   query += format(
     ` GROUP BY articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url
-      ORDER BY %s %s;`,
+      ORDER BY %s %s
+      LIMIT %s OFFSET %s;`,
     sort_by,
-    order
+    order,
+    limit,
+    offset
   );
-
   return db.query(query, values);
 };
 
