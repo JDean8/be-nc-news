@@ -30,7 +30,7 @@
     "description": "Serves an article on a key of article which makes the article ID url",
     "queries": [],
     "exampleResponse": {
-      "articles": [
+      "article": [
         {
           "article_id": 15,
           "title": "Seafood substitutions are increasing",
