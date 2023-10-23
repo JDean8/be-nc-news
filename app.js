@@ -12,9 +12,11 @@ const {
   customError,
   psqlError,
 } = require("./error-handling");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // routers
 app.use("/api/articles", articleRouter);
